@@ -25,6 +25,10 @@ class Site < ApplicationRecord
   def favicon_url
     return '' if url.blank?
     domain = url.gsub('http://', '')
-    "https://favicon.b0.upaiyun.com/ip2/#{domain}.ico"
+    if ENV['upload_provider'].eql?("upyun")
+      return "https://favicon.b0.upaiyun.com/ip2/#{domain}.ico"
+    else
+      return self.url + "/favicon.ico"
+    end
   end
 end
