@@ -2,8 +2,6 @@
 
 module Homeland
   module Site
-    VERSION     = "0.3.2"
-    NAME        = "site"
-    DESCRIPTION = "Site for Homeland."
+    VERSION = "1.0.0"
   end
 end

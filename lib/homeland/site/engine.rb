@@ -4,23 +4,21 @@ module Homeland::Site
   class Engine < ::Rails::Engine
     isolate_namespace Homeland::Site
 
-    initializer "homeland.site.init" do |app|
-      next unless (defined? Setting) && Setting.has_module?(:site)
-      Homeland.register_plugin do |plugin|
-        plugin.name = Homeland::Site::NAME
-        plugin.display_name = "酷站"
-        plugin.version = Homeland::Site::VERSION
-        plugin.description = Homeland::Site::DESCRIPTION
-        plugin.navbar_link = true
-        plugin.admin_navbar_link = true
-        plugin.root_path = "/sites"
-        plugin.admin_path = "/admin/sites"
-      end
+    initializer "homeland.site.migrate" do |app|
+      migrate_paths = [File.expand_path("../../../migrate", __dir__)]
 
+      # Execute Migrations on engine load.
+      ActiveRecord::Migrator.migrations_paths += migrate_paths
+      begin
+        ActiveRecord::Tasks::DatabaseTasks.migrate
+      rescue ActiveRecord::NoDatabaseError
+      end
+    end
+
+    initializer "homeland.site.init" do |app|
       app.routes.prepend do
         mount Homeland::Site::Engine => "/"
       end
-      app.config.paths["db/migrate"].concat(config.paths["db/migrate"].expanded)
     end
   end
 end
